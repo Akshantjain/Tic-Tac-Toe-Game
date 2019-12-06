@@ -36,9 +36,9 @@ public class Node {
 	{
 		
 		if(checkForDraw())
-			{
-				minMaxValue = 0;
-			}
+		{
+			minMaxValue = 0;
+		}
 		
 		if(state[0].equals("O") && state[1].equals("O") && state[2].equals("O")) //horizontal top
 		{
