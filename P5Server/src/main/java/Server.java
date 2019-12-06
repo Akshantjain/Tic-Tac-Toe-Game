@@ -93,7 +93,8 @@ public class Server {
                 if (client == null)
                     continue;
                 try {
-
+                    client.out.writeObject(new Pair(pair.getKey(), new Pair(client.count, pair.getValue())));
+                    client.out.reset();
                 } catch (Exception e) {
                     System.out.println("Line 75 Server.java " + e);
                 }
@@ -116,9 +117,8 @@ public class Server {
 
             while (true) {
                 try {
-//                    Pair<String, Integer> data = (Pair) in.readObject();
-//
-//                    System.out.println(data.getKey() + " " + data.getValue());
+                    Pair<String, Integer> data = (Pair) in.readObject();
+////
 
                     // TODO: Figure out callback schema
 //                    callback.accept("client: " + count + " sent: " + data);
@@ -129,7 +129,6 @@ public class Server {
                     clientIds.set(count, null);
 //                    clients.remove(this);
                     callback.accept(new GameInfo("UpdatePlayers", clients));
-
                     updateClients(new Pair("ConnectedPlayers", clientIds));
                     break;
                 }
