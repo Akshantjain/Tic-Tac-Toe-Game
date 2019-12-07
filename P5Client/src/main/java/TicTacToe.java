@@ -1,6 +1,7 @@
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -89,9 +92,7 @@ public class TicTacToe extends Application {
                 clientConnection = new Client(host, port,
                         data -> Platform.runLater(() -> progress.getItems().add(data.toString())),
                         data -> Platform.runLater(() -> scores.getItems().add(data.toString())),
-                        data -> Platform.runLater(() -> {
-                            playerID = (Integer) data;
-                        }),
+                        data -> Platform.runLater(() -> playerID = (Integer) data),
                         data -> Platform.runLater(() -> {
                             System.out.println("FROM LINE: " + data);
 
@@ -117,6 +118,19 @@ public class TicTacToe extends Application {
                 portInput.setFocusTraversable(false);
             }
         });
+        EventHandler<KeyEvent> tabEventHandler = event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                if (ipAddressInput.isFocused()) portInput.requestFocus();
+                else if (portInput.isFocused()) ipAddressInput.requestFocus();
+            }
+            if (event.getCode() == KeyCode.ENTER)   {
+                connectClient.fire();
+                event.consume();
+            }
+        };
+
+        ipAddressInput.setOnKeyPressed(tabEventHandler);
+        portInput.setOnKeyPressed(tabEventHandler);
 
         easyMode.setOnAction(mouseClick -> {
             try {
@@ -183,9 +197,7 @@ public class TicTacToe extends Application {
         buttons.getChildren().addAll(connectClient, clearInfo);
         inputBox.getChildren().addAll(ipAddressInput, portInput, buttons, exitButton);
 
-        clearInfo.setOnAction(e -> {
-            clearAll();
-        });
+        clearInfo.setOnAction(e -> clearAll());
 
         return new Scene(startBox, 700, 700);
     }
@@ -426,14 +438,12 @@ public class TicTacToe extends Application {
 
             currentMoves.set(8, "O");
         }
+        // send the updated game board to the server using the pause transition
         pauseSendMove.setOnFinished(e->{
             try { clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves))); pauseSendMove.stop(); }
             catch (Exception i) { i.printStackTrace(); }
         });
         pauseSendMove.play();
-        // send the updated game board to the server
-
-
     }
 
     private void makeComputerMove(int row, int column) {
