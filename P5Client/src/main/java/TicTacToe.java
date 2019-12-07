@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class TicTacToe extends Application {
-    enum moves {none, nought, cross}
 
     public Client clientConnection;        // variable for the client
     private int port;    // port number
@@ -304,7 +303,7 @@ public class TicTacToe extends Application {
     private void initMoves() {
         currentMoves.clear();
         for (int i = 0; i < 9; ++i)
-            currentMoves.add("");
+            currentMoves.add("b");
     }
 
     private GridPane createTheStackPane() {
@@ -380,47 +379,47 @@ public class TicTacToe extends Application {
     }
 
     private void makePlayerMove(int row, int column) {
-        if (row == 0 && column == 0 && currentMoves.get(0).equals("")) {
+        if (row == 0 && column == 0 && currentMoves.get(0).equals("b")) {
             board.get(0).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(0, "O");
         }
-        else if (row == 0 && column == 1 && currentMoves.get(1).equals("")) {
+        else if (row == 0 && column == 1 && currentMoves.get(1).equals("b")) {
             board.get(1).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(1, "O");
-        } else if (row == 0 && column == 2 && currentMoves.get(2).equals("")) {
+        } else if (row == 0 && column == 2 && currentMoves.get(2).equals("b")) {
             board.get(2).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(2, "O");
-        } else if (row == 1 && column == 0 && currentMoves.get(3).equals("")) {
+        } else if (row == 1 && column == 0 && currentMoves.get(3).equals("b")) {
             board.get(3).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(3, "O");
-        } else if (row == 1 && column == 1 && currentMoves.get(4).equals("")) {
+        } else if (row == 1 && column == 1 && currentMoves.get(4).equals("b")) {
             board.get(4).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(4, "O");
-        } else if (row == 1 && column == 2 && currentMoves.get(5).equals("")) {
+        } else if (row == 1 && column == 2 && currentMoves.get(5).equals("b")) {
             board.get(5).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(5, "O");
-        } else if (row == 2 && column == 0 && currentMoves.get(6).equals("")) {
+        } else if (row == 2 && column == 0 && currentMoves.get(6).equals("b")) {
             board.get(6).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(6, "O");
-        } else if (row == 2 && column == 1 && currentMoves.get(7).equals("")) {
+        } else if (row == 2 && column == 1 && currentMoves.get(7).equals("b")) {
             board.get(7).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
             currentMoves.set(7, "O");
-        } else if (row == 2 && column == 2 && currentMoves.get(8).equals("")) {
+        } else if (row == 2 && column == 2 && currentMoves.get(8).equals("b")) {
             board.get(8).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
 
@@ -438,39 +437,39 @@ public class TicTacToe extends Application {
     }
 
     private void makeComputerMove(int row, int column) {
-        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
+        if (row == 0 && column == 0 && currentMoves.get(0).equals("b")) {
             board.get(0).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(0, "X");
-        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
+        } else if (row == 0 && column == 1 && currentMoves.get(1).equals("b")) {
             board.get(1).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(1, "X");
-        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
+        } else if (row == 0 && column == 2 && currentMoves.get(2).equals("b")) {
             board.get(2).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(2, "X");
-        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
+        } else if (row == 1 && column == 0 && currentMoves.get(3).equals("b")) {
             board.get(3).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(3, "X");
-        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
+        } else if (row == 1 && column == 1 && currentMoves.get(4).equals("b")) {
             board.get(4).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(4, "X");
-        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
+        } else if (row == 1 && column == 2 && currentMoves.get(5).equals("b")) {
             board.get(5).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(5, "X");
-        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
+        } else if (row == 2 && column == 0 && currentMoves.get(6).equals("b")) {
             board.get(6).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(6, "X");
-        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
+        } else if (row == 2 && column == 1 && currentMoves.get(7).equals("b")) {
             board.get(7).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(7, "X");
-        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
+        } else if (row == 2 && column == 2 && currentMoves.get(8).equals("b")) {
             board.get(8).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(8, "X");
