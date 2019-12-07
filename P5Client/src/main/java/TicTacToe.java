@@ -150,8 +150,8 @@ public class TicTacToe extends Application {
     }
 
     private Scene ClientGUI1() {
-        Text clientTitle1 = desiredText(new Text("THE ROCK PAPER SCISSOR"));
-        Text clientTitle2 = desiredText(new Text("LIZARD SPOCK GAME!"));
+        Text clientTitle1 = desiredText(new Text("TIC TAC TOE"));
+        Text clientTitle2 = desiredText(new Text("MIN MAX GAME!"));
         Text empty = desiredText(new Text(""));
         clientTitle3 = desiredText(new Text("ENTER PLAYER INFORMATION"));
 
