@@ -1,3 +1,4 @@
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -13,6 +14,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.io.Serializable;
@@ -34,6 +36,7 @@ public class TicTacToe extends Application {
     private Integer playerID;
     private Vector<Rectangle> board = new Vector<>();
     private Text clientTitle3;
+    private PauseTransition pauseSendMove = new PauseTransition(Duration.seconds(1));
 
     public static void main(String[] args) {
         launch(args);
@@ -423,10 +426,14 @@ public class TicTacToe extends Application {
 
             currentMoves.set(8, "O");
         }
-
+        pauseSendMove.setOnFinished(e->{
+            try { clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves))); }
+            catch (Exception i) { i.printStackTrace(); }
+        });
+        pauseSendMove.play();
+        pauseSendMove.stop();
         // send the updated game board to the server
-        try { clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves))); }
-        catch (Exception e) { e.printStackTrace(); }
+
 
     }
 
