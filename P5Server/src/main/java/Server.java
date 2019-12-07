@@ -1,9 +1,12 @@
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -129,6 +132,15 @@ public class Server {
             System.out.println(subpair.getValue());
 
             games.get(PlayerID).boardState = subpair.getValue();
+
+            ArrayList<String> newBoard = new ArrayList<>(Arrays.asList("O", "b", "b", "b", "b", "b", "b", "b" ,"X"));
+
+            try {
+                clients.get(PlayerID).out.writeObject(new Pair("UpdatedBoard", new Pair(PlayerID, newBoard)));
+                clients.get(PlayerID).out.reset();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         public void handlePlayAgain(Pair data) {
@@ -183,7 +195,6 @@ public class Server {
                 }
             }
         }//end of run
-
 
     }//end of client thread
 }

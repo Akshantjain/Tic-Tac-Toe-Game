@@ -14,6 +14,7 @@ public class Client {
     private Consumer<Serializable> scores;
     private Consumer<Serializable> progress;
     private Consumer<Serializable> player;
+    private Consumer<Serializable> newBoard;
     private String IP;
     private int port;
     private int playerID;
@@ -21,13 +22,16 @@ public class Client {
     Client(String ip, int port,
            Consumer<Serializable> progress,
            Consumer<Serializable> scores,
-           Consumer<Serializable> player) {
+           Consumer<Serializable> player,
+           Consumer<Serializable> newBoard
+            ) {
         this.progress = progress;
         this.scores = scores;
         connectionThread.setDaemon(true);
         this.IP = ip;
         this.port = port;
         this.player = player;
+        this.newBoard = newBoard;
     }
 
     private String getIP() {
@@ -49,6 +53,10 @@ public class Client {
 
     void shutDown() throws Exception {
         connectionThread.socket.close();
+    }
+
+    public void handleUpdatedBoard(Pair data) {
+        newBoard.accept(((Pair<Integer, ArrayList<String>>) data).getValue());
     }
 
     class ClientThread extends Thread {
@@ -73,10 +81,14 @@ public class Client {
                     Pair<String, Pair<Integer, ArrayList<String>>> data = (Pair) in.readObject();
 
                     System.out.println(data.getKey());
+                    String choice = data.getKey();
 
-                    Pair<Integer, ArrayList<String>> subpair = data.getValue();
-
-                    player.accept(subpair.getKey());
+                    switch (choice) {
+                        case "ConnectedPlayers": Pair<Integer, ArrayList<String>> subpair = data.getValue();
+                                                 player.accept(subpair.getKey());
+                                                 break;
+                        case "UpdatedBoard": handleUpdatedBoard(data);
+                    }
                 }
             } catch (Exception e) {
                 progress.accept("Game Server Closed\nThank you for playing.");

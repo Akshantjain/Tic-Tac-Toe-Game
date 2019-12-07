@@ -89,6 +89,15 @@ public class TicTacToe extends Application {
                         data -> Platform.runLater(() -> scores.getItems().add(data.toString())),
                         data -> Platform.runLater(() -> {
                             playerID = (Integer) data;
+                        }),
+                        data -> Platform.runLater(() -> {
+                            System.out.println("FROM LINE: " + data);
+
+                            Pair<Integer, ArrayList<String>> subpair = (Pair<Integer, ArrayList<String>>) data;
+
+                            currentMoves = subpair.getValue();
+
+                            //board.get(8).setFill(new ImagePattern(new Image("X.png")));
                         })
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));

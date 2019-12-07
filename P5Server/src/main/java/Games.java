@@ -5,7 +5,6 @@ public class Games {
     int PlayerID;
     ArrayList<String> boardState;
 
-
     public String getComputerLevel() {
         return computerLevel;
     }
@@ -25,8 +24,6 @@ public class Games {
     int highScore = 0;
 
     Games(int PlayerID) {
-//        this.boardState = boardState;
-//        this.computerLevel = computerLevel;
         this.PlayerID = PlayerID;
     }
 
