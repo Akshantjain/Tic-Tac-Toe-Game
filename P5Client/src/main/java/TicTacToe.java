@@ -58,6 +58,14 @@ public class TicTacToe extends Application {
             setClickable(false);
 
             initMoves();
+
+            // send the updated game board to the server
+            try {
+                clientConnection.sendData(new Pair(playerID, new Pair("playAgain", currentMoves)));
+            }
+            catch (Exception error) {
+                error.printStackTrace();
+            }
         });
 
         exitButton.setOnAction(e -> {

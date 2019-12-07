@@ -131,6 +131,20 @@ public class Server {
             games.get(PlayerID).boardState = subpair.getValue();
         }
 
+        public void handlePlayAgain(Pair data) {
+            // get the player id from the data key
+            int PlayerID = (Integer) data.getKey();
+
+            //// get the subpair from the data
+            Pair<String, ArrayList<String>> subpair = (Pair<String, ArrayList<String>>) data.getValue();
+
+            // Clear the game board for the player
+            games.get(PlayerID).boardState = subpair.getValue();
+
+            // Clear the computer level from previous game
+            games.get(PlayerID).computerLevel = null;
+        }
+
         public void run() {
 
             try {
@@ -156,6 +170,8 @@ public class Server {
                                           break;
                         case "gameBoardUpdate": handleGameBoardUpdate(data);
                                                 break;
+                        case "playAgain": handlePlayAgain(data);
+                                          break;
                     }
 
                 } catch (Exception e) {
