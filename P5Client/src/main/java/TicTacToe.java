@@ -427,11 +427,10 @@ public class TicTacToe extends Application {
             currentMoves.set(8, "O");
         }
         pauseSendMove.setOnFinished(e->{
-            try { clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves))); }
+            try { clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves))); pauseSendMove.stop(); }
             catch (Exception i) { i.printStackTrace(); }
         });
         pauseSendMove.play();
-        pauseSendMove.stop();
         // send the updated game board to the server
 
 
