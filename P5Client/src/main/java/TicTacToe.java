@@ -13,6 +13,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -20,338 +21,427 @@ import java.util.Vector;
 
 public class TicTacToe extends Application {
 
-	enum level{none, easy, medium, expert};
-	enum moves{none, nought, cross}
+    enum level {none, easy, medium, expert}
 
-	private Client clientConnection;        // variable for the client
-	private int port;    // port number
-	private String host = null;        // IP Address
-	private level computerLevel;
-	private Vector <moves> currentMoves = new Vector <>();
-	private TextField ipAddressInput, portInput;        // text fields variables
-	private HashMap <String, Scene> SceneMap = new HashMap<>();        // hash map fo the scenes
-	private Button exitButton, connectClient, playAgain, clearInfo, easyMode, mediumMode, expertMode;    // buttons variables
-	private ListView<Serializable> scores = new ListView<>();
-	private ListView<Serializable> progress = new ListView<>();
-	private Vector <Rectangle> board = new Vector <>();
-	private Text clientTitle3;
+    enum moves {none, nought, cross}
 
-	public static void main(String[] args) { launch(args); }
+    public Client clientConnection;        // variable for the client
+    private int port;    // port number
+    private String host = null;        // IP Address
+    private String computerLevel;
+    private Vector<moves> currentMoves = new Vector<>();
+    private TextField ipAddressInput, portInput;        // text fields variables
+    private HashMap<String, Scene> SceneMap = new HashMap<>();        // hash map fo the scenes
+    private Button exitButton, connectClient, playAgain, clearInfo, easyMode, mediumMode, expertMode;    // buttons variables
+    private ListView<Serializable> scores = new ListView<>();
+    private ListView<Serializable> progress = new ListView<>();
+    private Integer playerID;
+    private Vector<Rectangle> board = new Vector<>();
+    private Text clientTitle3;
+    private int counter = 0;
 
-	//feel free to remove the starter code from this method
-	@Override
-	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Let's Play Tic Tac Toe!!!");
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-		SceneMap.put("ClientScene1", ClientGUI1());
-		SceneMap.put("ClientScene2", ClientGUI2());
-		SceneMap.put("ClientScene3", ClientGUI3());
+    //feel free to remove the starter code from this method
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Let's Play Tic Tac Toe!!!");
 
-		easyMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
-		mediumMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
-		expertMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
-		exitButton.setOnAction(e->primaryStage.close());
+        SceneMap.put("ClientScene1", ClientGUI1());
+        SceneMap.put("ClientScene2", ClientGUI2());
+        SceneMap.put("ClientScene3", ClientGUI3());
 
-		playAgain.setOnAction(e->{
-			primaryStage.setScene(SceneMap.get("ClientScene2"));
-			computerLevel = level.none;
-			clearBoard();
-			setClickable(false);
-		});
+        exitButton.setOnAction(e -> primaryStage.close());
 
-		exitButton.setOnAction(e -> {
-			primaryStage.close();
-			try {
-				// close down the client
-				clientConnection.sendData("QUIT");
-				clientConnection.shutDown();
-				Platform.exit();
-				System.exit(0);
-			} catch (Exception ignored) {}
-		});
+        playAgain.setOnAction(e -> {
+            primaryStage.setScene(SceneMap.get("ClientScene2"));
+            computerLevel = "";
+            clearBoard();
+            setClickable(false);
+        });
 
-		connectClient.setOnAction(e->{
-			try{
-				host = ipAddressInput.getText();
-				port = Integer.parseInt(portInput.getText());
-				clientConnection = new Client(host, port,
-						data -> Platform.runLater(() -> progress.getItems().add(data.toString())),
-						data -> Platform.runLater(() -> scores.getItems().add(data.toString()))
-				);
-				primaryStage.setScene(SceneMap.get("ClientScene2"));
-				clientConnection.start();
-				System.out.println("Client Start Called");
-			}
-			catch (Exception ignored)	{
-				clientTitle3.setText("SERVER NOT FOUND. RETRY!!!");
-				clientTitle3.setStyle("-fx-font-size: 25;" + "-fx-fill: RED;");
-				ipAddressInput.setText("");
-				portInput.setText("");
-				clearAll();
-				ipAddressInput.setFocusTraversable(false);
-				portInput.setFocusTraversable(false);
-			}
-		});
-		easyMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
-		mediumMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
-		expertMode.setOnAction(e->primaryStage.setScene(SceneMap.get("ClientScene3")));
+        exitButton.setOnAction(e -> {
+            primaryStage.close();
+            try {
+                // close down the client
+                clientConnection.sendData("QUIT");
+                clientConnection.shutDown();
+                Platform.exit();
+                System.exit(0);
+            } catch (Exception ignored) {
+            }
+        });
 
-		primaryStage.setScene(SceneMap.get("ClientScene1"));
-		primaryStage.show();
-	}
+        connectClient.setOnAction(e -> {
+            try {
+                host = ipAddressInput.getText();
+                port = Integer.parseInt(portInput.getText());
+                clientConnection = new Client(host, port,
+                        data -> Platform.runLater(() -> progress.getItems().add(data.toString())),
+                        data -> Platform.runLater(() -> scores.getItems().add(data.toString())),
+                        data -> Platform.runLater(() -> {
+                            playerID = (Integer) data;
+                        })
+                );
+                primaryStage.setScene(SceneMap.get("ClientScene2"));
 
-	private Scene ClientGUI1()	{
-		Text clientTitle1 = desiredText(new Text("THE ROCK PAPER SCISSOR"));
-		Text clientTitle2 = desiredText(new Text("LIZARD SPOCK GAME!"));
-		Text empty = desiredText(new Text(""));
-		clientTitle3 = desiredText(new Text("ENTER PLAYER INFORMATION"));
+                clientConnection.start();
 
-		empty.setStyle("-fx-font-size: 20px");
-		clientTitle3.setStyle("-fx-font-size: 25px");
+                System.out.println("Client Start Called");
+            } catch (Exception ignored) {
+                clientTitle3.setText("SERVER NOT FOUND. RETRY!!!");
+                clientTitle3.setStyle("-fx-font-size: 25;" + "-fx-fill: RED;");
+                ipAddressInput.setText("");
+                portInput.setText("");
+                clearAll();
+                ipAddressInput.setFocusTraversable(false);
+                portInput.setFocusTraversable(false);
+            }
+        });
 
-		ipAddressInput = createTextField(new Text("IP  ADDRESS"));
-		portInput = createTextField(new Text("PORT  NUMBER"));
+        easyMode.setOnAction(mouseClick -> {
+            try {
+                clientConnection.sendData(new Pair<String, String>("newGame", "easy"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-		connectClient = createButton("CONNECT");
-		clearInfo = createButton("CLEAR");
-		exitButton = createButton("EXIT");
+            primaryStage.setScene(SceneMap.get("ClientScene3"));
+        });
 
-		VBox startBox = new VBox();
-		HBox buttons = new HBox();
-		VBox inputBox = new VBox();
+        mediumMode.setOnMouseClicked(mouseEvent -> {
+            try {
+                clientConnection.sendData(new Pair<String, String>("newGame", "medium"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-		startBox.setAlignment(Pos.CENTER);
-		inputBox.setAlignment(Pos.CENTER);
-		inputBox.setMaxSize(300, 20);
-		inputBox.setPadding(new Insets(20, 0, 0, 0));
-		buttons.setSpacing(10);
-		inputBox.setSpacing(10);
+            primaryStage.setScene(SceneMap.get("ClientScene3"));
+        });
 
-		startBox.getChildren().addAll(clientTitle1, clientTitle2, empty, clientTitle3, inputBox);
-		buttons.getChildren().addAll(connectClient, clearInfo);
-		inputBox.getChildren().addAll(ipAddressInput, portInput, buttons, exitButton);
+        expertMode.setOnMouseClicked(mouseEvent -> {
+            try {
+                clientConnection.sendData(new Pair<String, String>("newGame", "expert"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-		clearInfo.setOnAction(e -> {
-			clearAll();
-		});
+            primaryStage.setScene(SceneMap.get("ClientScene3"));
+        });
 
-		return new Scene(startBox, 700, 700);
-	}
+        primaryStage.setScene(SceneMap.get("ClientScene1"));
+        primaryStage.show();
+    }
 
-	private void clearAll(){
-		ipAddressInput.setText("");
-		portInput.setText("");
-		clearInfo.setFocusTraversable(false);
-	}
+    private Scene ClientGUI1() {
+        Text clientTitle1 = desiredText(new Text("THE ROCK PAPER SCISSOR"));
+        Text clientTitle2 = desiredText(new Text("LIZARD SPOCK GAME!"));
+        Text empty = desiredText(new Text(""));
+        clientTitle3 = desiredText(new Text("ENTER PLAYER INFORMATION"));
 
-	private Scene ClientGUI2()	{
-		Text text = new Text("SELECT  COMPUTER  LEVEL");
-		text.setStyle("-fx-font-size: 20px; -fx-underline: single");
-		easyMode = createButton("EASY");
-		mediumMode = createButton("MEDIUM");
-		expertMode = createButton("EXPERT");
-		easyMode.setOnAction(e-> computerLevel = level.easy);
-		mediumMode.setOnAction(e-> computerLevel = level.medium);
-		expertMode.setOnAction(e-> computerLevel = level.expert);
-		VBox modesArea = new VBox(20, text, easyMode, mediumMode, expertMode);
-		modesArea.setAlignment(Pos.CENTER);
-		return new Scene(modesArea, 400, 300);
-	}
+        empty.setStyle("-fx-font-size: 20px");
+        clientTitle3.setStyle("-fx-font-size: 25px");
 
-	private Scene ClientGUI3()	{
-		BorderPane borderPane = new BorderPane();
-		borderPane.setStyle("-fx-spacing: 20;-fx-padding: 20");
-		playAgain = createButton("PLAY AGAIN");
-		HBox buttonsArea = new HBox(20, playAgain, exitButton);
-		buttonsArea.setAlignment(Pos.CENTER);
+        ipAddressInput = createTextField(new Text("IP  ADDRESS"));
+        portInput = createTextField(new Text("PORT  NUMBER"));
 
-		GridPane stackPane = createTheStackPane();
-		initMoves();
-		setClickable(false);
-		stackPane.setGridLinesVisible(true);
+        connectClient = createButton("CONNECT");
+        clearInfo = createButton("CLEAR");
+        exitButton = createButton("EXIT");
 
-		VBox vBox = new VBox(60, scores);
-		vBox.setPadding(new Insets(0, 0, 0, 20));
-		vBox.setPrefHeight(200);
-		vBox.setPrefWidth(200);
-		vBox.setAlignment(Pos.CENTER);
+        VBox startBox = new VBox();
+        HBox buttons = new HBox();
+        VBox inputBox = new VBox();
 
-		HBox hBox = new HBox(30, stackPane, vBox);
-		scores.setFocusTraversable(false);
-		scores.setPrefWidth(200);
-		scores.setPrefHeight(200);
-		scores.getItems().add("Top Scores: ");
+        startBox.setAlignment(Pos.CENTER);
+        inputBox.setAlignment(Pos.CENTER);
+        inputBox.setMaxSize(300, 20);
+        inputBox.setPadding(new Insets(20, 0, 0, 0));
+        buttons.setSpacing(10);
+        inputBox.setSpacing(10);
 
-		hBox.setAlignment(Pos.CENTER);
-		hBox.setAlignment(Pos.CENTER);
+        startBox.getChildren().addAll(clientTitle1, clientTitle2, empty, clientTitle3, inputBox);
+        buttons.getChildren().addAll(connectClient, clearInfo);
+        inputBox.getChildren().addAll(ipAddressInput, portInput, buttons, exitButton);
 
-		borderPane.setCenter(hBox);
-		borderPane.setBottom(buttonsArea);
+        clearInfo.setOnAction(e -> {
+            clearAll();
+        });
 
-		return new Scene(borderPane, 700, 500);
-	}
+        return new Scene(startBox, 700, 700);
+    }
 
-	private TextField createTextField(Text string) {
-		TextField textField = new TextField();
-		textField.setPromptText(string.getText());
-		textField.setFocusTraversable(false);
-		textField.setStyle(
-				"-fx-font-size: 20px;" +
-						"-fx-background-radius: 1em;" +
-						"-fx-border-radius: 1em;" +
-						"-fx-display-carezt: false;"
-		);
-		return textField;
-	}
+    private void clearAll() {
+        ipAddressInput.setText("");
+        portInput.setText("");
+        clearInfo.setFocusTraversable(false);
+    }
 
-	private Button createButton(String text)	{
-		Button button = new Button(text);
-		button.setFocusTraversable(false);
-		button.setStyle(
-				"-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
-				"-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
-				"-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
-				"-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
-		);
-		button.setOnMouseEntered(e->
-				button.setStyle(
-						"-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
-						"-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
-						"-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
-						"-fx-background-color: #c2c2c2;" + "-fx-border-color: #000000;"
-				)
-		);
-		button.setOnMouseExited(e->
-			button.setStyle(
-					"-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
-					"-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
-					"-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
-					"-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
-			)
-		);
-		button.setOnMousePressed(e->
-				button.setStyle(
-						"-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
-						"-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
-						"-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
-						"-fx-background-color: #676767;" + "-fx-border-color: #000000;"
-				)
-		);
-		button.setOnMouseReleased(e->
-				button.setStyle(
-						"-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
-						"-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
-						"-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
-						"-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
-				)
-		);
-		return button;
-	}
+    private Scene ClientGUI2() {
+        Text text = new Text("SELECT  COMPUTER  LEVEL");
+        text.setStyle("-fx-font-size: 20px; -fx-underline: single");
+        easyMode = createButton("EASY");
+//        easyMode = new Button("EASY");
+        mediumMode = createButton("MEDIUM");
+        expertMode = createButton("EXPERT");
 
-	private Text desiredText(Text string) {
-		string.setStyle("-fx-font-size: 40");
-		return string;
-	}
+        VBox modesArea = new VBox(20, text, easyMode, mediumMode, expertMode);
+        modesArea.setAlignment(Pos.CENTER);
+        return new Scene(modesArea, 400, 300);
+    }
 
-	private void initMoves()	{
-		currentMoves.clear();
-		for (int i = 0; i< 9; ++i)
-			currentMoves.add(moves.none);
-	}
+    private Scene ClientGUI3() {
+        BorderPane borderPane = new BorderPane();
+        borderPane.setStyle("-fx-spacing: 20;-fx-padding: 20");
+        playAgain = createButton("PLAY AGAIN");
+        HBox buttonsArea = new HBox(20, playAgain, exitButton);
+        buttonsArea.setAlignment(Pos.CENTER);
 
-	private GridPane createTheStackPane()	{
-		Rectangle TopLeft = createRectangle(0, 0);
-		Rectangle TopCenter = createRectangle(0, 1);
-		Rectangle TopRight = createRectangle(0, 2);
+        GridPane stackPane = createTheStackPane();
+        initMoves();
+        setClickable(false);
+        stackPane.setGridLinesVisible(true);
 
-		Rectangle CenterLeft = createRectangle(1, 0);
-		Rectangle CenterCenter = createRectangle(1, 1);
-		Rectangle CenterRight = createRectangle(1, 2);
+        VBox vBox = new VBox(60, scores);
+        vBox.setPadding(new Insets(0, 0, 0, 20));
+        vBox.setPrefHeight(200);
+        vBox.setPrefWidth(200);
+        vBox.setAlignment(Pos.CENTER);
 
-		Rectangle BottomLeft = createRectangle(2, 0);
-		Rectangle BottomCenter = createRectangle(2, 1);
-		Rectangle BottomRight = createRectangle(2, 2);
+        HBox hBox = new HBox(30, stackPane, vBox);
+        scores.setFocusTraversable(false);
+        scores.setPrefWidth(200);
+        scores.setPrefHeight(200);
+        scores.getItems().add("Top Scores: ");
 
-		GridPane gridPane = new GridPane();
-		gridPane.add(TopLeft, 0, 0);
-		gridPane.add(TopCenter, 1, 0);
-		gridPane.add(TopRight, 2, 0);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setAlignment(Pos.CENTER);
 
-		gridPane.add(CenterLeft, 0, 1);
-		gridPane.add(CenterCenter, 1, 1);
-		gridPane.add(CenterRight, 2, 1);
+        borderPane.setCenter(hBox);
+        borderPane.setBottom(buttonsArea);
 
-		gridPane.add(BottomLeft, 0, 2);
-		gridPane.add(BottomCenter, 1, 2);
-		gridPane.add(BottomRight, 2, 2);
+        return new Scene(borderPane, 700, 500);
+    }
 
-		board.add(TopLeft);
-		board.add(TopCenter);
-		board.add(TopRight);
+    private TextField createTextField(Text string) {
+        TextField textField = new TextField();
+        textField.setPromptText(string.getText());
+        textField.setFocusTraversable(false);
+        textField.setStyle(
+                "-fx-font-size: 20px;" +
+                        "-fx-background-radius: 1em;" +
+                        "-fx-border-radius: 1em;" +
+                        "-fx-display-carezt: false;"
+        );
+        return textField;
+    }
 
-		board.add(CenterLeft);
-		board.add(CenterCenter);
-		board.add(CenterRight);
+    private Button createButton(String text) {
+        Button button = new Button(text);
+        button.setFocusTraversable(false);
+        button.setStyle(
+                "-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
+                        "-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
+                        "-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
+                        "-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
+        );
+        button.setOnMouseEntered(e ->
+                button.setStyle(
+                        "-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
+                                "-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
+                                "-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
+                                "-fx-background-color: #c2c2c2;" + "-fx-border-color: #000000;"
+                )
+        );
+        button.setOnMouseExited(e ->
+                button.setStyle(
+                        "-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
+                                "-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
+                                "-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
+                                "-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
+                )
+        );
+        button.setOnMousePressed(e ->
+                button.setStyle(
+                        "-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
+                                "-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
+                                "-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
+                                "-fx-background-color: #676767;" + "-fx-border-color: #000000;"
+                )
+        );
+        button.setOnMouseReleased(e ->
+                button.setStyle(
+                        "-fx-pref-width: 150px;" + "-fx-pref-height: 10px;" +
+                                "-fx-font-size: 20px;" + "-fx-spacing: 100px;" +
+                                "-fx-border-radius: 1em;" + "-fx-background-radius: 1em;" +
+                                "-fx-background-color: #ffffff;" + "-fx-border-color: #000000;"
+                )
+        );
+        return button;
+    }
 
-		board.add(BottomLeft);
-		board.add(BottomCenter);
-		board.add(BottomRight);
+    private Text desiredText(Text string) {
+        string.setStyle("-fx-font-size: 40");
+        return string;
+    }
 
-		return gridPane;
-	}
+    private void initMoves() {
+        currentMoves.clear();
+        for (int i = 0; i < 9; ++i)
+            currentMoves.add(moves.none);
+    }
 
-	private Rectangle createRectangle(int row, int column)	{
-		Rectangle rectangle = new Rectangle(133, 133);
-		rectangle.setFill(new Color(0, 0, 0, 0));
-		rectangle.setOnMouseClicked(e-> {
-			makePlayerMove(row, column);
-		});
-		return rectangle;
-	}
+    private GridPane createTheStackPane() {
+        Rectangle TopLeft = createRectangle(0, 0);
+        Rectangle TopCenter = createRectangle(0, 1);
+        Rectangle TopRight = createRectangle(0, 2);
 
-	private void setClickable(boolean bool)	{
-		for (Rectangle rectangle : board)	{
-			rectangle.setDisable(bool);
-		}
-	}
+        Rectangle CenterLeft = createRectangle(1, 0);
+        Rectangle CenterCenter = createRectangle(1, 1);
+        Rectangle CenterRight = createRectangle(1, 2);
 
-	private void clearBoard()	{
-		for (Rectangle rectangle : board) {
-			rectangle.setFill(new Color(0, 0, 0, 0));
-			rectangle.setDisable(false);
-		}
-	}
+        Rectangle BottomLeft = createRectangle(2, 0);
+        Rectangle BottomCenter = createRectangle(2, 1);
+        Rectangle BottomRight = createRectangle(2, 2);
 
-	private void enableOpenMoves()	{
-		for (Rectangle rectangle : board)	{
-			if ((!rectangle.getFill().equals(new ImagePattern(new Image("X.png"))))
-					&& (!rectangle.getFill().equals(new ImagePattern(new Image("O.png")))))	{
-				rectangle.setDisable(false);
-			}
-		}
-	}
+        GridPane gridPane = new GridPane();
+        gridPane.add(TopLeft, 0, 0);
+        gridPane.add(TopCenter, 1, 0);
+        gridPane.add(TopRight, 2, 0);
 
-	private  void makePlayerMove(int row, int column)	{
-		if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {board.get(0).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(0, moves.cross);}
-		else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {board.get(1).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(1, moves.cross);}
-		else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {board.get(2).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(2, moves.cross);}
-		else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {board.get(3).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(3, moves.cross);}
-		else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {board.get(4).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(4, moves.cross);}
-		else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {board.get(5).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(5, moves.cross);}
-		else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {board.get(6).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(6, moves.cross);}
-		else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {board.get(7).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(7, moves.cross);}
-		else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {board.get(8).setFill(new ImagePattern(new Image("X.png"))); setClickable(true); currentMoves.set(8, moves.cross);}
-	}
+        gridPane.add(CenterLeft, 0, 1);
+        gridPane.add(CenterCenter, 1, 1);
+        gridPane.add(CenterRight, 2, 1);
 
-	private void makeComputerMove(int row, int column)	{
-		if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {board.get(0).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(0, moves.nought);}
-		else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {board.get(1).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(1, moves.nought);}
-		else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {board.get(2).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(2, moves.nought);}
-		else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {board.get(3).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(3, moves.nought);}
-		else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {board.get(4).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(4, moves.nought);}
-		else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {board.get(5).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(5, moves.nought);}
-		else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {board.get(6).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(6, moves.nought);}
-		else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {board.get(7).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(7, moves.nought);}
-		else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {board.get(8).setFill(new ImagePattern(new Image("O.png"))); setClickable(true); currentMoves.set(8, moves.nought);}
-	}
+        gridPane.add(BottomLeft, 0, 2);
+        gridPane.add(BottomCenter, 1, 2);
+        gridPane.add(BottomRight, 2, 2);
+
+        board.add(TopLeft);
+        board.add(TopCenter);
+        board.add(TopRight);
+
+        board.add(CenterLeft);
+        board.add(CenterCenter);
+        board.add(CenterRight);
+
+        board.add(BottomLeft);
+        board.add(BottomCenter);
+        board.add(BottomRight);
+
+        return gridPane;
+    }
+
+    private Rectangle createRectangle(int row, int column) {
+        Rectangle rectangle = new Rectangle(133, 133);
+        rectangle.setFill(new Color(0, 0, 0, 0));
+        rectangle.setOnMouseClicked(e -> {
+            makePlayerMove(row, column);
+        });
+        return rectangle;
+    }
+
+    private void setClickable(boolean bool) {
+        for (Rectangle rectangle : board) {
+            rectangle.setDisable(bool);
+        }
+    }
+
+    private void clearBoard() {
+        for (Rectangle rectangle : board) {
+            rectangle.setFill(new Color(0, 0, 0, 0));
+            rectangle.setDisable(false);
+        }
+    }
+
+    private void enableOpenMoves() {
+        for (Rectangle rectangle : board) {
+            if ((!rectangle.getFill().equals(new ImagePattern(new Image("X.png"))))
+                    && (!rectangle.getFill().equals(new ImagePattern(new Image("O.png"))))) {
+                rectangle.setDisable(false);
+            }
+        }
+    }
+
+    private void makePlayerMove(int row, int column) {
+        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
+            board.get(0).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(0, moves.cross);
+        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
+            board.get(1).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(1, moves.cross);
+        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
+            board.get(2).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(2, moves.cross);
+        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
+            board.get(3).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(3, moves.cross);
+        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
+            board.get(4).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(4, moves.cross);
+        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
+            board.get(5).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(5, moves.cross);
+        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
+            board.get(6).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(6, moves.cross);
+        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
+            board.get(7).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(7, moves.cross);
+        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
+            board.get(8).setFill(new ImagePattern(new Image("X.png")));
+            setClickable(true);
+            currentMoves.set(8, moves.cross);
+        }
+    }
+
+    private void makeComputerMove(int row, int column) {
+        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
+            board.get(0).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(0, moves.nought);
+        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
+            board.get(1).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(1, moves.nought);
+        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
+            board.get(2).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(2, moves.nought);
+        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
+            board.get(3).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(3, moves.nought);
+        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
+            board.get(4).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(4, moves.nought);
+        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
+            board.get(5).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(5, moves.nought);
+        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
+            board.get(6).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(6, moves.nought);
+        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
+            board.get(7).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(7, moves.nought);
+        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
+            board.get(8).setFill(new ImagePattern(new Image("O.png")));
+            setClickable(true);
+            currentMoves.set(8, moves.nought);
+        }
+    }
 }

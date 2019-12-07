@@ -18,8 +18,10 @@ import sun.awt.image.ImageWatched;
 public class Server {
     private int port;
     int count = 0;
-    ArrayList<ClientThread> clients = new ArrayList<ClientThread>();
+    ArrayList<ClientThread> clients = new ArrayList<>();
     ArrayList<String> clientIds = new ArrayList<>();
+    String computerLevel;
+    ArrayList<Games> games = new ArrayList<Games>();
 
     // games is a List of Pairs.
     // Those Pairs have a Pair of Client IDs
@@ -55,14 +57,15 @@ public class Server {
                     clients.add(c);
                     clientIds.add(Integer.toString(c.count));
 
+                    games.add(new Games(count));
+
                     // Update Server GUI with updated list of clients
-                    callback.accept(new GameInfo("UpdatePlayers", clients));
+                    callback.accept(new GameInfo("UpdatePlayers", clients, computerLevel));
                     c.start();
 
                     // Update all Clients with list of active clients
-//                    c.updateClients(new GameInfo("UpdateClients", clients));
+                   c.updateClients(new Pair("ConnectedPlayers", clientIds));
                     count++;
-
                 }
             }//end of try
             catch (Exception e) {
@@ -74,8 +77,6 @@ public class Server {
 
 
     class ClientThread extends Thread {
-
-
         Socket connection;
         int count;
         boolean inGame;
@@ -112,23 +113,23 @@ public class Server {
                 System.out.println("Streams not open");
             }
 
-
             updateClients(new Pair("ConnectedPlayers", clientIds));
 
             while (true) {
                 try {
-                    Pair<String, Integer> data = (Pair) in.readObject();
-////
+                    Pair<String, String> data = (Pair) in.readObject();
+
+                    String choice = data.getKey().toString();
 
                     // TODO: Figure out callback schema
-//                    callback.accept("client: " + count + " sent: " + data);
-//                    updateClients("client #" + count + " said: " + data);
 
+                    switch (choice) {
+                        case "New Player": System.out.println(data.getValue().toString());
+                    }
                 } catch (Exception e) {
                     clients.set(count, null);
                     clientIds.set(count, null);
-//                    clients.remove(this);
-                    callback.accept(new GameInfo("UpdatePlayers", clients));
+                    callback.accept(new GameInfo("UpdatePlayers", clients, computerLevel));
                     updateClients(new Pair("ConnectedPlayers", clientIds));
                     break;
                 }

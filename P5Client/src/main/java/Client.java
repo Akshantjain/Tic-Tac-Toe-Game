@@ -1,24 +1,32 @@
+import javafx.util.Pair;
+
+import java.awt.image.ConvolveOp;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class Client {
     private ClientThread connectionThread = new ClientThread();
     private Consumer<Serializable> scores;
     private Consumer<Serializable> progress;
+    private Consumer<Serializable> player;
     private String IP;
     private int port;
+    private int playerID;
 
     Client(String ip, int port,
            Consumer<Serializable> progress,
-           Consumer<Serializable> scores) {
+           Consumer<Serializable> scores,
+           Consumer<Serializable> player) {
         this.progress = progress;
         this.scores = scores;
         connectionThread.setDaemon(true);
         this.IP = ip;
         this.port = port;
+        this.player = player;
     }
 
     private String getIP() {
@@ -61,7 +69,13 @@ public class Client {
 //                sendData("Player Name: " + playerName + "player ID: ");
 
                 while (true) {
-                    Serializable data = (Serializable) in.readObject();
+                    Pair data = (Pair) in.readObject();
+
+                    System.out.println(data.getKey());
+
+                    Pair<Integer, Integer> subpair = (Pair<Integer, Integer>) data.getValue();
+
+                    player.accept(subpair.getKey());
                 }
             } catch (Exception e) {
                 progress.accept("Game Server Closed\nThank you for playing.");
