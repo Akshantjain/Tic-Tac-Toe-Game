@@ -102,8 +102,10 @@ public class TicTacToe extends Application {
         });
 
         easyMode.setOnAction(mouseClick -> {
+            System.out.println("Clicked from line 105");
+
             try {
-                clientConnection.sendData(new Pair<String, String>("newGame", "easy"));
+                clientConnection.sendData(new Pair(playerID, new Pair("levelType", "easy")));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -111,9 +113,10 @@ public class TicTacToe extends Application {
             primaryStage.setScene(SceneMap.get("ClientScene3"));
         });
 
-        mediumMode.setOnMouseClicked(mouseEvent -> {
+        mediumMode.setOnAction(mouseEvent -> {
+            System.out.println("Clicked from line 117");
             try {
-                clientConnection.sendData(new Pair<String, String>("newGame", "medium"));
+                clientConnection.sendData(new Pair(playerID, new Pair("levelType", "medium")));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -121,9 +124,10 @@ public class TicTacToe extends Application {
             primaryStage.setScene(SceneMap.get("ClientScene3"));
         });
 
-        expertMode.setOnMouseClicked(mouseEvent -> {
+        expertMode.setOnAction(mouseEvent -> {
+            System.out.println("Clicked from line 128");
             try {
-                clientConnection.sendData(new Pair<String, String>("newGame", "expert"));
+                clientConnection.sendData(new Pair(playerID, new Pair("levelType", "expert")));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -367,35 +371,35 @@ public class TicTacToe extends Application {
 
     private void makePlayerMove(int row, int column) {
         if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
-            board.get(0).setFill(new ImagePattern(new Image("X.png")));
+            board.get(0).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(0, moves.cross);
         } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
-            board.get(1).setFill(new ImagePattern(new Image("X.png")));
+            board.get(1).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(1, moves.cross);
         } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
-            board.get(2).setFill(new ImagePattern(new Image("X.png")));
+            board.get(2).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(2, moves.cross);
         } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
-            board.get(3).setFill(new ImagePattern(new Image("X.png")));
+            board.get(3).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(3, moves.cross);
         } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
-            board.get(4).setFill(new ImagePattern(new Image("X.png")));
+            board.get(4).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(4, moves.cross);
         } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
-            board.get(5).setFill(new ImagePattern(new Image("X.png")));
+            board.get(5).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(5, moves.cross);
         } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
-            board.get(6).setFill(new ImagePattern(new Image("X.png")));
+            board.get(6).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(6, moves.cross);
         } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
-            board.get(7).setFill(new ImagePattern(new Image("X.png")));
+            board.get(7).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
             currentMoves.set(7, moves.cross);
         } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
@@ -407,39 +411,39 @@ public class TicTacToe extends Application {
 
     private void makeComputerMove(int row, int column) {
         if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
-            board.get(0).setFill(new ImagePattern(new Image("O.png")));
+            board.get(0).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(0, moves.nought);
         } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
-            board.get(1).setFill(new ImagePattern(new Image("O.png")));
+            board.get(1).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(1, moves.nought);
         } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
-            board.get(2).setFill(new ImagePattern(new Image("O.png")));
+            board.get(2).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(2, moves.nought);
         } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
-            board.get(3).setFill(new ImagePattern(new Image("O.png")));
+            board.get(3).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(3, moves.nought);
         } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
-            board.get(4).setFill(new ImagePattern(new Image("O.png")));
+            board.get(4).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(4, moves.nought);
         } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
-            board.get(5).setFill(new ImagePattern(new Image("O.png")));
+            board.get(5).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(5, moves.nought);
         } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
-            board.get(6).setFill(new ImagePattern(new Image("O.png")));
+            board.get(6).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(6, moves.nought);
         } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
-            board.get(7).setFill(new ImagePattern(new Image("O.png")));
+            board.get(7).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(7, moves.nought);
         } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
-            board.get(8).setFill(new ImagePattern(new Image("O.png")));
+            board.get(8).setFill(new ImagePattern(new Image("X.png")));
             setClickable(true);
             currentMoves.set(8, moves.nought);
         }

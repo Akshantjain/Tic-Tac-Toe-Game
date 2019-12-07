@@ -4,6 +4,7 @@ import java.awt.image.ConvolveOp;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -69,11 +70,11 @@ public class Client {
 //                sendData("Player Name: " + playerName + "player ID: ");
 
                 while (true) {
-                    Pair data = (Pair) in.readObject();
+                    Pair<String, Pair<Integer, ArrayList<String>>> data = (Pair) in.readObject();
 
                     System.out.println(data.getKey());
 
-                    Pair<Integer, Integer> subpair = (Pair<Integer, Integer>) data.getValue();
+                    Pair<Integer, ArrayList<String>> subpair = data.getValue();
 
                     player.accept(subpair.getKey());
                 }

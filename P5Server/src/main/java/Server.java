@@ -14,6 +14,8 @@ import javafx.scene.control.ListView;
 import javafx.util.Pair;
 import sun.awt.image.ImageWatched;
 
+import static javax.swing.UIManager.get;
+
 
 public class Server {
     private int port;
@@ -57,14 +59,16 @@ public class Server {
                     clients.add(c);
                     clientIds.add(Integer.toString(c.count));
 
-                    games.add(new Games(count));
-
                     // Update Server GUI with updated list of clients
                     callback.accept(new GameInfo("UpdatePlayers", clients, computerLevel));
                     c.start();
 
                     // Update all Clients with list of active clients
                    c.updateClients(new Pair("ConnectedPlayers", clientIds));
+
+                    Games game = new Games(count);
+                    games.add(game);
+
                     count++;
                 }
             }//end of try
@@ -103,6 +107,15 @@ public class Server {
             }
         }
 
+        public void handleComputerLevel(Pair data) {
+
+            int PlayerID = (Integer) data.getKey();
+
+            Pair<String, String> subpair = (Pair<String, String>) data.getValue();
+
+            games.get(PlayerID).computerLevel =  subpair.getValue();
+        }
+
         public void run() {
 
             try {
@@ -117,15 +130,18 @@ public class Server {
 
             while (true) {
                 try {
-                    Pair<String, String> data = (Pair) in.readObject();
+                    Pair<Integer, Pair<String, String>> data = (Pair) in.readObject();
 
                     String choice = data.getKey().toString();
 
+                    Pair<String, String> subpair = data.getValue();
+
                     // TODO: Figure out callback schema
 
-                    switch (choice) {
-                        case "New Player": System.out.println(data.getValue().toString());
+                    switch (subpair.getKey()) {
+                        case "levelType": handleComputerLevel(data);
                     }
+
                 } catch (Exception e) {
                     clients.set(count, null);
                     clientIds.set(count, null);
