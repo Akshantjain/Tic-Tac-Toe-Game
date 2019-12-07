@@ -16,20 +16,17 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
 public class TicTacToe extends Application {
-
-    enum level {none, easy, medium, expert}
-
     enum moves {none, nought, cross}
 
     public Client clientConnection;        // variable for the client
     private int port;    // port number
     private String host = null;        // IP Address
-    private String computerLevel;
-    private Vector<moves> currentMoves = new Vector<>();
+    private ArrayList<String> currentMoves = new ArrayList<>();
     private TextField ipAddressInput, portInput;        // text fields variables
     private HashMap<String, Scene> SceneMap = new HashMap<>();        // hash map fo the scenes
     private Button exitButton, connectClient, playAgain, clearInfo, easyMode, mediumMode, expertMode;    // buttons variables
@@ -38,7 +35,6 @@ public class TicTacToe extends Application {
     private Integer playerID;
     private Vector<Rectangle> board = new Vector<>();
     private Text clientTitle3;
-    private int counter = 0;
 
     public static void main(String[] args) {
         launch(args);
@@ -57,9 +53,11 @@ public class TicTacToe extends Application {
 
         playAgain.setOnAction(e -> {
             primaryStage.setScene(SceneMap.get("ClientScene2"));
-            computerLevel = "";
+
             clearBoard();
             setClickable(false);
+
+            initMoves();
         });
 
         exitButton.setOnAction(e -> {
@@ -102,8 +100,6 @@ public class TicTacToe extends Application {
         });
 
         easyMode.setOnAction(mouseClick -> {
-            System.out.println("Clicked from line 105");
-
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "easy")));
             } catch (Exception e) {
@@ -114,7 +110,6 @@ public class TicTacToe extends Application {
         });
 
         mediumMode.setOnAction(mouseEvent -> {
-            System.out.println("Clicked from line 117");
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "medium")));
             } catch (Exception e) {
@@ -125,7 +120,6 @@ public class TicTacToe extends Application {
         });
 
         expertMode.setOnAction(mouseEvent -> {
-            System.out.println("Clicked from line 128");
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "expert")));
             } catch (Exception e) {
@@ -187,7 +181,6 @@ public class TicTacToe extends Application {
         Text text = new Text("SELECT  COMPUTER  LEVEL");
         text.setStyle("-fx-font-size: 20px; -fx-underline: single");
         easyMode = createButton("EASY");
-//        easyMode = new Button("EASY");
         mediumMode = createButton("MEDIUM");
         expertMode = createButton("EXPERT");
 
@@ -294,7 +287,7 @@ public class TicTacToe extends Application {
     private void initMoves() {
         currentMoves.clear();
         for (int i = 0; i < 9; ++i)
-            currentMoves.add(moves.none);
+            currentMoves.add("");
     }
 
     private GridPane createTheStackPane() {
@@ -370,82 +363,100 @@ public class TicTacToe extends Application {
     }
 
     private void makePlayerMove(int row, int column) {
-        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
+        if (row == 0 && column == 0 && currentMoves.get(0).equals("")) {
             board.get(0).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(0, moves.cross);
-        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
+            currentMoves.set(0, "O");
+        }
+        else if (row == 0 && column == 1 && currentMoves.get(1).equals("")) {
             board.get(1).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(1, moves.cross);
-        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
+
+            currentMoves.set(1, "O");
+        } else if (row == 0 && column == 2 && currentMoves.get(2).equals("")) {
             board.get(2).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(2, moves.cross);
-        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
+
+            currentMoves.set(2, "O");
+        } else if (row == 1 && column == 0 && currentMoves.get(3).equals("")) {
             board.get(3).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(3, moves.cross);
-        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
+
+            currentMoves.set(3, "O");
+        } else if (row == 1 && column == 1 && currentMoves.get(4).equals("")) {
             board.get(4).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(4, moves.cross);
-        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
+
+            currentMoves.set(4, "O");
+        } else if (row == 1 && column == 2 && currentMoves.get(5).equals("")) {
             board.get(5).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(5, moves.cross);
-        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
+
+            currentMoves.set(5, "O");
+        } else if (row == 2 && column == 0 && currentMoves.get(6).equals("")) {
             board.get(6).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(6, moves.cross);
-        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
+
+            currentMoves.set(6, "O");
+        } else if (row == 2 && column == 1 && currentMoves.get(7).equals("")) {
             board.get(7).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(7, moves.cross);
-        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
-            board.get(8).setFill(new ImagePattern(new Image("X.png")));
+
+            currentMoves.set(7, "O");
+        } else if (row == 2 && column == 2 && currentMoves.get(8).equals("")) {
+            board.get(8).setFill(new ImagePattern(new Image("O.png")));
             setClickable(true);
-            currentMoves.set(8, moves.cross);
+
+            currentMoves.set(8, "O");
         }
+
+        // send the updated game board to the server
+        try {
+            clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves)));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private void makeComputerMove(int row, int column) {
-        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
-            board.get(0).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(0, moves.nought);
-        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
-            board.get(1).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(1, moves.nought);
-        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
-            board.get(2).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(2, moves.nought);
-        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
-            board.get(3).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(3, moves.nought);
-        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
-            board.get(4).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(4, moves.nought);
-        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
-            board.get(5).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(5, moves.nought);
-        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
-            board.get(6).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(6, moves.nought);
-        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
-            board.get(7).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(7, moves.nought);
-        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
-            board.get(8).setFill(new ImagePattern(new Image("X.png")));
-            setClickable(true);
-            currentMoves.set(8, moves.nought);
-        }
-    }
+//    private void makeComputerMove(int row, int column) {
+//        if (row == 0 && column == 0 && currentMoves.get(0) == moves.none) {
+//            board.get(0).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(0, moves.nought);
+//        } else if (row == 0 && column == 1 && currentMoves.get(1) == moves.none) {
+//            board.get(1).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(1, moves.nought);
+//        } else if (row == 0 && column == 2 && currentMoves.get(2) == moves.none) {
+//            board.get(2).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(2, moves.nought);
+//        } else if (row == 1 && column == 0 && currentMoves.get(3) == moves.none) {
+//            board.get(3).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(3, moves.nought);
+//        } else if (row == 1 && column == 1 && currentMoves.get(4) == moves.none) {
+//            board.get(4).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(4, moves.nought);
+//        } else if (row == 1 && column == 2 && currentMoves.get(5) == moves.none) {
+//            board.get(5).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(5, moves.nought);
+//        } else if (row == 2 && column == 0 && currentMoves.get(6) == moves.none) {
+//            board.get(6).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(6, moves.nought);
+//        } else if (row == 2 && column == 1 && currentMoves.get(7) == moves.none) {
+//            board.get(7).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(7, moves.nought);
+//        } else if (row == 2 && column == 2 && currentMoves.get(8) == moves.none) {
+//            board.get(8).setFill(new ImagePattern(new Image("X.png")));
+//            setClickable(true);
+//            currentMoves.set(8, moves.nought);
+//        }
+//    }
 }

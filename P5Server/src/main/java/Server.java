@@ -109,11 +109,26 @@ public class Server {
 
         public void handleComputerLevel(Pair data) {
 
+            // get the player id from the data key
             int PlayerID = (Integer) data.getKey();
 
+            //// get the subpair from the data
             Pair<String, String> subpair = (Pair<String, String>) data.getValue();
 
+            // set the computer level the players wants to play
             games.get(PlayerID).computerLevel =  subpair.getValue();
+        }
+
+        public void handleGameBoardUpdate(Pair data) {
+            // get the player id from the data key
+            int PlayerID = (Integer) data.getKey();
+
+            //// get the subpair from the data
+            Pair<String, ArrayList<String>> subpair = (Pair<String, ArrayList<String>>) data.getValue();
+
+            System.out.println(subpair.getValue());
+
+            games.get(PlayerID).boardState = subpair.getValue();
         }
 
         public void run() {
@@ -132,14 +147,15 @@ public class Server {
                 try {
                     Pair<Integer, Pair<String, String>> data = (Pair) in.readObject();
 
-                    String choice = data.getKey().toString();
-
                     Pair<String, String> subpair = data.getValue();
 
                     // TODO: Figure out callback schema
 
                     switch (subpair.getKey()) {
                         case "levelType": handleComputerLevel(data);
+                                          break;
+                        case "gameBoardUpdate": handleGameBoardUpdate(data);
+                                                break;
                     }
 
                 } catch (Exception e) {
