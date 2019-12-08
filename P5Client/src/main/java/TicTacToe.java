@@ -104,13 +104,14 @@ public class TicTacToe extends Application {
                             scores.getItems().clear();
                             scores.getItems().add(data.toString());
                         }),
-
                         data -> Platform.runLater(() -> playerID = (Integer) data),
                         data -> Platform.runLater(() -> {
                             makeComputerMove((int) data - 1);
                         }),
-                        data -> Platform.runLater(() ->
-                                updateClientUI(data.toString()))
+                        data -> Platform.runLater(() -> updateClientUI(data.toString())),
+                        data -> Platform.runLater(() -> {
+                            makeComputerMove((int) data - 1);
+                        })
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));
 
@@ -445,7 +446,7 @@ public class TicTacToe extends Application {
         // send the updated game board to the server using the pause transition
         pauseSendMove.setOnFinished(e -> {
             try {
-                if (filledSquares < 9) {
+                if (filledSquares <= 9) {
                     clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves)));
                     pauseSendMove.stop();
                 }

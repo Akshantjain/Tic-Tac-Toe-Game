@@ -20,21 +20,23 @@ public class Client {
     private int port;
     private int playerID;
 
+
     Client(String ip, int port,
            Consumer<Serializable> progress,
            Consumer<Serializable> scores,
            Consumer<Serializable> player,
            Consumer<Serializable> newBoard,
-           Consumer<Serializable> gameResult
+           Consumer<Serializable> gameResult,
+           Consumer<Serializable> newBoardWithNoMoves
             ) {
         this.progress = progress;
         this.scores = scores;
-        connectionThread.setDaemon(true);
         this.IP = ip;
         this.port = port;
         this.player = player;
         this.newBoard = newBoard;
         this.gameResult = gameResult;
+        connectionThread.setDaemon(true);
     }
 
     private String getIP() {
@@ -60,7 +62,6 @@ public class Client {
 
     public void handleUpdatedBoard(Pair data) {
         newBoard.accept((int) data.getValue());
-//        newBoard.accept(((Pair<Integer, ArrayList<String>>) data));
     }
 
     public void handleGameResults (Pair data) {
@@ -69,7 +70,7 @@ public class Client {
 
         System.out.println(subpair.getKey());
 
-        gameResult.accept("You " + data.getKey().toString() + "\n Score: " + subpair.getKey().toString());
+        gameResult.accept(data.getKey().toString() + "\n Score: " + subpair.getKey().toString());
     }
 
     public void handleTop3Scores(Pair data) {
@@ -98,7 +99,6 @@ public class Client {
                 while (true) {
                     Pair<String, Pair<Integer, ArrayList<String>>> data = (Pair) in.readObject();
 
-                    System.out.println(data.getKey());
                     String choice = data.getKey();
 
                     switch (choice) {
@@ -111,6 +111,10 @@ public class Client {
                                        break;
                         case "Lost": handleGameResults(data);
                                       break;
+                        case "Tie": handleGameResults(data);
+                                     break;
+                        case "UpdatedBoardNoMoves": handleUpdatedBoard(data.getValue());
+                                                    break;
                         case "Top3Scores": handleTop3Scores(data);
                     }
                 }

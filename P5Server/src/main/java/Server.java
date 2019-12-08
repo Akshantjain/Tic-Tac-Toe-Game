@@ -133,7 +133,13 @@ public class Server {
                 return gameBoard.get(2);
             }
 
-            return "No Result";
+            for (int i = 0; i < gameBoard.size(); i++) {
+                if (gameBoard.get(i).equals("b")) {
+                    return "No Result";
+                }
+            }
+
+            return "Draw";
         }
 
         public boolean checkForWinner (int PlayerID, Pair<String, ArrayList<String>> subpair) {
@@ -166,6 +172,17 @@ public class Server {
                 }
 
                 // update the top 3 scores arraylist
+
+                return true;
+            }
+            else if (decision.equals("Draw")) {
+                // Update the client gui
+                try {
+                    clients.get(PlayerID).out.writeObject(new Pair("Tie", new Pair(games.get(PlayerID).highScore, games.get(PlayerID).boardState)));
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 return true;
             }
@@ -230,8 +247,18 @@ public class Server {
             // will call min max and get new board here
             int newBoard = FindNextMove.getMove(games.get(PlayerID).boardState, games.get(PlayerID).computerLevel);
 
+            games.get(PlayerID).boardState.set(newBoard - 1, "X");
+
             if (checkForWinner(PlayerID, subpair)) {
+
                 sortTop3Scores();
+
+                try {
+                    clients.get(PlayerID).out.writeObject(new Pair("UpdatedBoardNoMoves", new Pair(PlayerID, newBoard)));
+                    clients.get(PlayerID).out.reset();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 return;
             }
