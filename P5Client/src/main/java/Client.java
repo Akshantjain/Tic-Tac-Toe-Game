@@ -67,7 +67,14 @@ public class Client {
 
         Pair<Integer, ArrayList<String>> subpair = (Pair<Integer, ArrayList<String>>) data.getValue();
 
+        System.out.println(subpair.getKey());
+
         gameResult.accept("You " + data.getKey().toString() + "\n Score: " + subpair.getKey().toString());
+    }
+
+    public void handleTop3Scores(Pair data) {
+        ArrayList<Integer> subpair = (ArrayList<Integer>) data.getValue();
+        scores.accept(subpair);
     }
 
     class ClientThread extends Thread {
@@ -104,6 +111,7 @@ public class Client {
                                        break;
                         case "Lost": handleGameResults(data);
                                       break;
+                        case "Top3Scores": handleTop3Scores(data);
                     }
                 }
             } catch (Exception e) {
