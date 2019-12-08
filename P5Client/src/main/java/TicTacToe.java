@@ -384,13 +384,6 @@ public class TicTacToe extends Application {
                 continue;
             board.get(i).setDisable(false);
         }
-
-//        for (Rectangle rectangle : board) {
-//            if ((!rectangle.getFill().equals(new ImagePattern(new Image("X.png"))))
-//                    && (!rectangle.getFill().equals(new ImagePattern(new Image("O.png"))))) {
-//                rectangle.setDisable(false);
-//            }
-//        }
     }
 
     private void makePlayerMove(int location) {
