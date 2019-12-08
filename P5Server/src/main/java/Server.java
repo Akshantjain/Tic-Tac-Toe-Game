@@ -109,6 +109,69 @@ public class Server {
             }
         }
 
+        public String getWinner(ArrayList<String> gameBoard) {
+
+            if (gameBoard.get(0).equals(gameBoard.get(1))  && gameBoard.get(0).equals(gameBoard.get(2))) {
+                return gameBoard.get(0);
+            }
+            else if (gameBoard.get(3).equals(gameBoard.get(4))  && gameBoard.get(3).equals(gameBoard.get(5))){
+                return gameBoard.get(3);
+            }
+            else if (gameBoard.get(6).equals(gameBoard.get(7))  && gameBoard.get(6).equals(gameBoard.get(8))) {
+                return gameBoard.get(6);
+            }
+            else if (gameBoard.get(0).equals(gameBoard.get(4))  && gameBoard.get(0).equals(gameBoard.get(4))) {
+                return gameBoard.get(0);
+            }
+            else if (gameBoard.get(0).equals(gameBoard.get(4))  && gameBoard.get(2).equals(gameBoard.get(6))) {
+                return gameBoard.get(0);
+            }
+            else if (gameBoard.get(0).equals(gameBoard.get(3))  && gameBoard.get(0).equals(gameBoard.get(6))) {
+                return gameBoard.get(0);
+            }
+            else if (gameBoard.get(1).equals(gameBoard.get(4))  && gameBoard.get(1).equals(gameBoard.get(7))) {
+                return gameBoard.get(1);
+            }
+            else if (gameBoard.get(2).equals(gameBoard.get(5))  && gameBoard.get(2).equals(gameBoard.get(8))) {
+                return gameBoard.get(2);
+            }
+
+            return "No Result";
+        }
+
+        public void checkForWinner (int PlayerID, Pair<String, ArrayList<String>> subpair) {
+            String decision = getWinner(subpair.getValue());
+
+            if (decision.equals("O")) {
+                // Update client gui
+                try {
+                    clients.get(PlayerID).out.writeObject(new Pair("Win", new Pair(games.get(PlayerID).highScore, games.get(PlayerID).boardState)));
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // update score for that client on the games arraylist
+                games.get(PlayerID).setHighScore(games.get(PlayerID).getHighScore() + 1);
+
+                // update the top 3 scores arraylist
+
+            }
+            else if (decision.equals("X")) {
+                // Update the client gui
+                try {
+                    clients.get(PlayerID).out.writeObject(new Pair("Lost", new Pair(games.get(PlayerID).highScore, games.get(PlayerID).boardState)));
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // update the top 3 scores arraylist
+
+            }
+
+        }
+
         public void handleComputerLevel(Pair data) {
 
             // get the player id from the data key
@@ -132,9 +195,12 @@ public class Server {
 
             games.get(PlayerID).boardState = subpair.getValue();
 
+            checkForWinner(PlayerID, subpair);
+
             // will call min max and get new board here
-//            ArrayList<String> newBoard = new ArrayList<>(Arrays.asList("O", "b", "b", "b", "b", "b", "b", "b" ,"X"));
             int newBoard = FindNextMove.getMove(games.get(PlayerID).boardState, games.get(PlayerID).computerLevel);
+
+            checkForWinner(PlayerID, subpair);
 
             try {
                 clients.get(PlayerID).out.writeObject(new Pair("UpdatedBoard", new Pair(PlayerID, newBoard)));

@@ -49,7 +49,7 @@ public class TicTacToe extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {    // main method
-		primaryStage.setTitle("Rock Paper Scissor Lizard Spock Game!!!");
+		primaryStage.setTitle("Tic Tac Toe Game");
 
 		// embed the scenes in to the hash map
 		SceneMap.put("ServerScene1", ServerGUI1());
@@ -109,8 +109,8 @@ public class TicTacToe extends Application {
 	private Scene ServerGUI1() {
 		// creating and setting up various variables like buttons, text fields, and titles to their positions
 		// and set their styles for scene 1
-		Text serverTitle1 = desiredText(new Text("THE ROCK PAPER SCISSOR"));
-		Text serverTitle2 = desiredText(new Text("LIZARD SPOCK GAME!"));
+		Text serverTitle1 = desiredText(new Text("Tic Tac"));
+		Text serverTitle2 = desiredText(new Text("Toe!"));
 		Text empty = desiredText(new Text(""));
 		serverTitle3 = desiredText(new Text("NEW SERVER INFORMATION"));
 

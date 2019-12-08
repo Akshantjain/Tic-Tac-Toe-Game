@@ -15,6 +15,7 @@ public class Client {
     private Consumer<Serializable> progress;
     private Consumer<Serializable> player;
     private Consumer<Serializable> newBoard;
+    private Consumer<Serializable> gameResult;
     private String IP;
     private int port;
     private int playerID;
@@ -23,7 +24,8 @@ public class Client {
            Consumer<Serializable> progress,
            Consumer<Serializable> scores,
            Consumer<Serializable> player,
-           Consumer<Serializable> newBoard
+           Consumer<Serializable> newBoard,
+           Consumer<Serializable> gameResult
             ) {
         this.progress = progress;
         this.scores = scores;
@@ -32,6 +34,7 @@ public class Client {
         this.port = port;
         this.player = player;
         this.newBoard = newBoard;
+        this.gameResult = gameResult;
     }
 
     private String getIP() {
@@ -58,6 +61,13 @@ public class Client {
     public void handleUpdatedBoard(Pair data) {
         newBoard.accept((int) data.getValue());
 //        newBoard.accept(((Pair<Integer, ArrayList<String>>) data));
+    }
+
+    public void handleGameResults (Pair data) {
+
+        Pair<Integer, ArrayList<String>> subpair = (Pair<Integer, ArrayList<String>>) data.getValue();
+
+        gameResult.accept("You " + data.getKey().toString() + "\n Score: " + subpair.getKey().toString());
     }
 
     class ClientThread extends Thread {
@@ -89,6 +99,11 @@ public class Client {
                                                  player.accept(subpair.getKey());
                                                  break;
                         case "UpdatedBoard": handleUpdatedBoard(data.getValue());
+                                             break;
+                        case "Win": handleGameResults(data);
+                                       break;
+                        case "Lost": handleGameResults(data);
+                                      break;
                     }
                 }
             } catch (Exception e) {

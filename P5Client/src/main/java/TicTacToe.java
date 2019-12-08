@@ -41,7 +41,9 @@ public class TicTacToe extends Application {
     private Vector<Rectangle> board = new Vector<>();
     private Text clientTitle3;
     private TextField result;
+    private String gameResult;
     private PauseTransition pauseSendMove = new PauseTransition(Duration.seconds(1));
+    private boolean gotResult = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -67,6 +69,10 @@ public class TicTacToe extends Application {
             filledSquares = 0;
 
             initMoves();
+
+            result.setText("");
+
+            gotResult = false;
 
             // send the updated game board to the server
             try {
@@ -97,9 +103,10 @@ public class TicTacToe extends Application {
                         data -> Platform.runLater(() -> scores.getItems().add(data.toString())),
                         data -> Platform.runLater(() -> playerID = (Integer) data),
                         data -> Platform.runLater(() -> {
-                            System.out.println("FROM LINE: " + data);
                             makeComputerMove((int) data - 1);
-                        })
+                        }),
+                        data -> Platform.runLater(() ->
+                                updateClientUI(data.toString()))
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));
 
@@ -133,6 +140,9 @@ public class TicTacToe extends Application {
         easyMode.setOnAction(mouseClick -> {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "easy")));
+
+//                playAgain.setDisable(true);
+//                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -143,6 +153,9 @@ public class TicTacToe extends Application {
         mediumMode.setOnAction(mouseEvent -> {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "medium")));
+
+//                playAgain.setDisable(true);
+//                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -153,6 +166,9 @@ public class TicTacToe extends Application {
         expertMode.setOnAction(mouseEvent -> {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "expert")));
+
+//                playAgain.setDisable(true);
+//                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -381,6 +397,15 @@ public class TicTacToe extends Application {
         return rectangle;
     }
 
+    private void updateClientUI (String data) {
+        result.setText(data);
+        setClickable(true);
+        gotResult = true;
+
+//        playAgain.setDisable(false);
+//        exitButton.setDisable(false);
+    }
+
     private void setClickable(boolean bool) {
         for (Rectangle rectangle : board) {
             rectangle.setDisable(bool);
@@ -395,6 +420,11 @@ public class TicTacToe extends Application {
     }
 
     private void enableOpenMoves() {
+
+        if (gotResult) {
+            return;
+        }
+
         for (int i = 0; i < 9; i++) {
             if (currentMoves.get(i).equals("X") || currentMoves.get(i).equals("O"))
                 continue;
