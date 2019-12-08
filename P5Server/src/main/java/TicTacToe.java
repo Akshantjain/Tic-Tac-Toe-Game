@@ -1,11 +1,14 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,7 +32,6 @@ public class TicTacToe extends Application {
 	private Text serverTitle3;        // variable used for animation
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		launch(args);
 	}
 
@@ -85,6 +87,18 @@ public class TicTacToe extends Application {
 			} catch (Exception ignored) {
 			}
 		});
+
+		EventHandler <KeyEvent> tabEventHandler = event -> {
+			if (event.getCode() == KeyCode.TAB)
+				if (portInput.isFocused()) portInput.requestFocus();
+			if (event.getCode() == KeyCode.ENTER)   {
+				createServer.fire();
+				event.consume();
+			}
+		};
+
+		portInput.setOnKeyPressed(tabEventHandler);
+		createServer.setOnKeyPressed(tabEventHandler);
 
 		primaryStage.setScene(SceneMap.get("ServerScene1"));    // set scene 1
 		primaryStage.setFullScreenExitHint("");    // just in case
