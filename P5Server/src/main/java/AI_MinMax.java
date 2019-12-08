@@ -31,7 +31,7 @@ public class AI_MinMax {
 		
 		movesList = sendIn_InitState.findMoves();
 		
-		printBestMoves();
+//		printBestMoves();
 	}
 	
 	/**
