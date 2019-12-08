@@ -406,7 +406,7 @@ public class TicTacToe extends Application {
 
     private void makeComputerMove(int location) {
         board.get(location).setFill(new ImagePattern(new Image("X.png")));
-        setClickable(true);
+        enableOpenMoves();
         currentMoves.set(location, "O");
     }
 }
