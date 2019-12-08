@@ -56,7 +56,8 @@ public class Client {
     }
 
     public void handleUpdatedBoard(Pair data) {
-        newBoard.accept(((Pair<Integer, ArrayList<String>>) data).getValue());
+        newBoard.accept((int) data.getValue());
+//        newBoard.accept(((Pair<Integer, ArrayList<String>>) data));
     }
 
     class ClientThread extends Thread {
@@ -87,7 +88,7 @@ public class Client {
                         case "ConnectedPlayers": Pair<Integer, ArrayList<String>> subpair = data.getValue();
                                                  player.accept(subpair.getKey());
                                                  break;
-                        case "UpdatedBoard": handleUpdatedBoard(data);
+                        case "UpdatedBoard": handleUpdatedBoard(data.getValue());
                     }
                 }
             } catch (Exception e) {
