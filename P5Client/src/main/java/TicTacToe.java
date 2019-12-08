@@ -28,6 +28,7 @@ import java.util.Vector;
 public class TicTacToe extends Application {
 
     private Client clientConnection;        // variable for the client
+    private int filledSquares = 0;
     private int port;    // port number
     private String host = null;        // IP Address
     private ArrayList<String> currentMoves = new ArrayList<>();
@@ -62,6 +63,8 @@ public class TicTacToe extends Application {
             clearBoard();
             setClickable(false);
 
+            filledSquares = 0;
+
             initMoves();
 
             // send the updated game board to the server
@@ -94,9 +97,7 @@ public class TicTacToe extends Application {
                         data -> Platform.runLater(() -> playerID = (Integer) data),
                         data -> Platform.runLater(() -> {
                             System.out.println("FROM LINE: " + data);
-                            board.get((int) data - 1).setFill(new ImagePattern(new Image("X.png")));
-                            currentMoves.set((int) data - 1, "X");
-                            enableOpenMoves();
+                            makeComputerMove((int) data - 1);
                         })
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));
@@ -380,7 +381,7 @@ public class TicTacToe extends Application {
 
     private void enableOpenMoves() {
         for (int i = 0; i < 9; i++) {
-            if(currentMoves.get(i).equals("X") || currentMoves.get(i).equals("O"))
+            if (currentMoves.get(i).equals("X") || currentMoves.get(i).equals("O"))
                 continue;
             board.get(i).setDisable(false);
         }
@@ -390,12 +391,15 @@ public class TicTacToe extends Application {
         board.get(location).setFill(new ImagePattern(new Image("O.png")));
         setClickable(true);
         currentMoves.set(location, "O");
+        filledSquares++;
 
         // send the updated game board to the server using the pause transition
         pauseSendMove.setOnFinished(e -> {
             try {
-                clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves)));
-                pauseSendMove.stop();
+                if (filledSquares < 9) {
+                    clientConnection.sendData(new Pair(playerID, new Pair("gameBoardUpdate", currentMoves)));
+                    pauseSendMove.stop();
+                }
             } catch (Exception i) {
                 i.printStackTrace();
             }
@@ -405,7 +409,8 @@ public class TicTacToe extends Application {
 
     private void makeComputerMove(int location) {
         board.get(location).setFill(new ImagePattern(new Image("X.png")));
+        currentMoves.set(location, "X");
         enableOpenMoves();
-        currentMoves.set(location, "O");
+        filledSquares++;
     }
 }
