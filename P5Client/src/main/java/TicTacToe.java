@@ -40,6 +40,7 @@ public class TicTacToe extends Application {
     private Integer playerID;
     private Vector<Rectangle> board = new Vector<>();
     private Text clientTitle3;
+    private TextField result;
     private PauseTransition pauseSendMove = new PauseTransition(Duration.seconds(1));
 
     public static void main(String[] args) {
@@ -229,7 +230,21 @@ public class TicTacToe extends Application {
         setClickable(false);
         stackPane.setGridLinesVisible(true);
 
-        VBox vBox = new VBox(60, scores);
+        result = new TextField();
+        result.setPromptText("RESULT");
+        result.setPrefWidth(170);
+        result.setPrefHeight(150);
+        result.setAlignment(Pos.CENTER);
+        result.setFocusTraversable(false);
+        result.setDisable(true);
+        result.setStyle("-fx-font-size: 20px;" +
+                "-fx-border-radius: 1em;" +
+                "-fx-background-radius: 1em;" +
+                "-fx-text-alignment: center;" +
+                "-fx-opacity: 1");
+
+
+        VBox vBox = new VBox(40, scores, result);
         vBox.setPadding(new Insets(0, 0, 0, 20));
         vBox.setPrefHeight(200);
         vBox.setPrefWidth(200);
