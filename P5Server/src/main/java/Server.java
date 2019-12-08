@@ -5,10 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -177,7 +174,29 @@ public class Server {
         }
 
         public void sortTop3Scores() {
-            
+
+            ArrayList<Integer> finalList = new ArrayList<>();
+
+            for (int i = 0; i < games.size(); i++) {
+                if (games.get(i) != null) {
+
+                    finalList.add(games.get(i).getHighScore());
+                }
+            }
+
+            Collections.reverse(finalList);
+
+            for (ClientThread client : clients) {
+                if (client == null)
+                    continue;
+                try {
+                    client.out.writeObject(new Pair("Top3Scores", finalList));
+                    client.out.reset();
+                } catch (Exception e) {
+                    System.out.println("Line 75 Server.java " + e);
+                }
+
+            }
         }
 
         public void handleComputerLevel(Pair data) {
@@ -199,11 +218,12 @@ public class Server {
             //// get the subpair from the data
             Pair<String, ArrayList<String>> subpair = (Pair<String, ArrayList<String>>) data.getValue();
 
-            System.out.println(subpair.getValue());
-
             games.get(PlayerID).boardState = subpair.getValue();
 
             if (checkForWinner(PlayerID, subpair)) {
+
+                sortTop3Scores();
+
                 return;
             }
 
@@ -211,6 +231,8 @@ public class Server {
             int newBoard = FindNextMove.getMove(games.get(PlayerID).boardState, games.get(PlayerID).computerLevel);
 
             if (checkForWinner(PlayerID, subpair)) {
+                sortTop3Scores();
+
                 return;
             }
 
@@ -268,6 +290,7 @@ public class Server {
                 } catch (Exception e) {
                     clients.set(count, null);
                     clientIds.set(count, null);
+                    games.set(count, null);
                     callback.accept(new GameInfo("UpdatePlayers", clients, computerLevel));
                     updateClients(new Pair("ConnectedPlayers", clientIds));
                     break;

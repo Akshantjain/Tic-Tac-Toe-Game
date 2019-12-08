@@ -100,7 +100,11 @@ public class TicTacToe extends Application {
                 port = Integer.parseInt(portInput.getText());
                 clientConnection = new Client(host, port,
                         data -> Platform.runLater(() -> progress.getItems().add(data.toString())),
-                        data -> Platform.runLater(() -> scores.getItems().add(data.toString())),
+                        data -> Platform.runLater(() -> {
+                            scores.getItems().clear();
+                            scores.getItems().add(data.toString());
+                        }),
+
                         data -> Platform.runLater(() -> playerID = (Integer) data),
                         data -> Platform.runLater(() -> {
                             makeComputerMove((int) data - 1);
