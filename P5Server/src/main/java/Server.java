@@ -134,7 +134,7 @@ public class Server {
 
             // will call min max and get new board here
 //            ArrayList<String> newBoard = new ArrayList<>(Arrays.asList("O", "b", "b", "b", "b", "b", "b", "b" ,"X"));
-            ArrayList<String> newBoard = FindNextMove.getMove(games.get(PlayerID).boardState, games.get(PlayerID).computerLevel);
+            int newBoard = FindNextMove.getMove(games.get(PlayerID).boardState, games.get(PlayerID).computerLevel);
 
             try {
                 clients.get(PlayerID).out.writeObject(new Pair("UpdatedBoard", new Pair(PlayerID, newBoard)));

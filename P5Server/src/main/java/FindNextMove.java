@@ -4,7 +4,7 @@ import java.util.Random;
 public class FindNextMove {
 
 
-    public static ArrayList<String> getMove(ArrayList<String> gameBoard, String difficulty) {
+    public static int getMove(ArrayList<String> gameBoard, String difficulty) {
         String[] init_board;
         ArrayList<Node> movesList;
 
@@ -27,7 +27,7 @@ public class FindNextMove {
             case "expert":
                 return makeGoodMove(movesList, gameBoard);
             default:
-                return null;
+                return -1;
         }
     }
 
@@ -41,7 +41,7 @@ public class FindNextMove {
 
     }
 
-    private static ArrayList<String> makeBadMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
+    private static int makeBadMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
         int maxScore = 99;
         ArrayList<Integer> maxIndexes = new ArrayList<>();
         for (int i = 0; i < movesList.size(); i++) {
@@ -58,23 +58,25 @@ public class FindNextMove {
         int index = rand.nextInt(maxIndexes.size());
         Node choice = movesList.get(maxIndexes.get(index));
 
-        gameBoard.set(choice.getMovedTo()-1, "X");
+//        gameBoard.set(choice.getMovedTo()-1, "X");
 
-        return gameBoard;
+        return choice.getMovedTo();
+//        return gameBoard;
     }
 
-    private static ArrayList<String> makeOkayMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
+    private static int makeOkayMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
 
         Random rand = new Random();
         int index = rand.nextInt(movesList.size());
         Node choice = movesList.get(index);
 
-        gameBoard.set(choice.getMovedTo()-1, "X");
+//        gameBoard.set(choice.getMovedTo()-1, "X");
 
-        return gameBoard;
+        return choice.getMovedTo();
+//        return gameBoard;
     }
 
-    private static ArrayList<String> makeGoodMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
+    private static int makeGoodMove(ArrayList<Node> movesList, ArrayList<String> gameBoard) {
         int maxScore = -99;
         ArrayList<Integer> maxIndexes = new ArrayList<>();
         for (int i = 0; i < movesList.size(); i++) {
@@ -91,8 +93,9 @@ public class FindNextMove {
         int index = rand.nextInt(maxIndexes.size());
         Node choice = movesList.get(maxIndexes.get(index));
 
-        gameBoard.set(choice.getMovedTo()-1, "X");
+//        gameBoard.set(choice.getMovedTo()-1, "X");
 
-        return gameBoard;
+        return choice.getMovedTo();
+//        return gameBoard;
     }
 }
