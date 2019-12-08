@@ -95,6 +95,8 @@ public class TicTacToe extends Application {
                         data -> Platform.runLater(() -> {
                             System.out.println("FROM LINE: " + data);
                             board.get((int) data - 1).setFill(new ImagePattern(new Image("X.png")));
+                            currentMoves.set((int) data - 1, "X");
+                            enableOpenMoves();
                         })
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));
@@ -388,7 +390,7 @@ public class TicTacToe extends Application {
     private void makePlayerMove(int location) {
         board.get(location).setFill(new ImagePattern(new Image("O.png")));
         setClickable(true);
-        currentMoves.set(0, "O");
+        currentMoves.set(location, "O");
 
         // send the updated game board to the server using the pause transition
         pauseSendMove.setOnFinished(e -> {
@@ -405,6 +407,6 @@ public class TicTacToe extends Application {
     private void makeComputerMove(int location) {
         board.get(location).setFill(new ImagePattern(new Image("X.png")));
         setClickable(true);
-        currentMoves.set(0, "O");
+        currentMoves.set(location, "O");
     }
 }
