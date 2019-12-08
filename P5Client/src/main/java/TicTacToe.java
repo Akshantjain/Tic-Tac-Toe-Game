@@ -146,8 +146,8 @@ public class TicTacToe extends Application {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "easy")));
 
-//                playAgain.setDisable(true);
-//                exitButton.setDisable(true);
+                playAgain.setDisable(true);
+                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -159,8 +159,8 @@ public class TicTacToe extends Application {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "medium")));
 
-//                playAgain.setDisable(true);
-//                exitButton.setDisable(true);
+                playAgain.setDisable(true);
+                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -172,8 +172,8 @@ public class TicTacToe extends Application {
             try {
                 clientConnection.sendData(new Pair(playerID, new Pair("levelType", "expert")));
 
-//                playAgain.setDisable(true);
-//                exitButton.setDisable(true);
+                playAgain.setDisable(true);
+                exitButton.setDisable(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -407,8 +407,8 @@ public class TicTacToe extends Application {
         setClickable(true);
         gotResult = true;
 
-//        playAgain.setDisable(false);
-//        exitButton.setDisable(false);
+        playAgain.setDisable(false);
+        exitButton.setDisable(false);
     }
 
     private void setClickable(boolean bool) {
