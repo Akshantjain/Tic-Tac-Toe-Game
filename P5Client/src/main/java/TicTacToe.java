@@ -52,7 +52,7 @@ public class TicTacToe extends Application {
     //feel free to remove the starter code from this method
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Let's Play Tic Tac Toe!!!");
+        primaryStage.setTitle("Tic Tac Toe Game");
 
         SceneMap.put("ClientScene1", ClientGUI1());
         SceneMap.put("ClientScene2", ClientGUI2());
