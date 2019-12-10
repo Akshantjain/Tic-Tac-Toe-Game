@@ -24,7 +24,6 @@ public class TicTacToe extends Application {
 	private int port;        // variable for port number
 	private HashMap<String, Scene> SceneMap = new HashMap<>();        // different scenes hash map
 	private TextField portInput;        // scene 1 text field for port number input
-	//private Label progress1 = new Label("PROGRESS"), progress2 = new Label("PROGRESS");
 	private Button exitButton, createServer, closeServer;        // buttons variables
 	private ListView<Serializable> connectedClients = new ListView<>();        // list view variable
 	private ListView<Serializable> roundPlayStats = new ListView<>();
@@ -35,7 +34,7 @@ public class TicTacToe extends Application {
 		launch(args);
 	}
 
-	public void handleCallback(GameInfo data) {
+	private void handleCallback(GameInfo data) {
 		switch (data.type) {
 			case "UpdatePlayers":
 				connectedClients.getItems().clear();

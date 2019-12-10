@@ -2,33 +2,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import javafx.application.Platform;
-import javafx.scene.control.ListView;
 import javafx.util.Pair;
-import sun.awt.image.ImageWatched;
-
-import static javax.swing.UIManager.get;
 
 
 public class Server {
     private int port;
-    int count = 0;
-    ArrayList<ClientThread> clients = new ArrayList<>();
-    ArrayList<String> clientIds = new ArrayList<>();
-    String computerLevel;
-    ArrayList<Games> games = new ArrayList<Games>();
+    private int count = 0;
+    private ArrayList<ClientThread> clients = new ArrayList<>();
+    private ArrayList<String> clientIds = new ArrayList<>();
+    private String computerLevel;
+    private ArrayList<Games> games = new ArrayList <>();
 
     // games is a List of Pairs.
     // Those Pairs have a Pair of Client IDs
     // Those Pairs also have a List of game choices
-    TheServer server;
+    private TheServer server;
     private Consumer<Serializable> callback;
 
     Server(int port, Consumer<Serializable> call) {
@@ -92,7 +84,7 @@ public class Server {
             this.inGame = false;
         }
 
-        public void updateClients(Pair pair) {
+        void updateClients(Pair pair) {
             for (ClientThread client : clients) {
                 if (client == null)
                     continue;
@@ -106,7 +98,7 @@ public class Server {
             }
         }
 
-        public String getWinner(ArrayList<String> gameBoard) {
+        String getWinner(ArrayList <String> gameBoard) {
 
             if (!gameBoard.get(0).equals("b") && gameBoard.get(0).equals(gameBoard.get(1))  && gameBoard.get(0).equals(gameBoard.get(2))) {
                 return gameBoard.get(0);
@@ -142,7 +134,7 @@ public class Server {
             return "Draw";
         }
 
-        public boolean checkForWinner (int PlayerID, Pair<String, ArrayList<String>> subpair) {
+        boolean checkForWinner(int PlayerID, Pair <String, ArrayList <String>> subpair) {
             String decision = getWinner(subpair.getValue());
 
             if (decision.equals("O")) {
@@ -190,7 +182,7 @@ public class Server {
             return false;
         }
 
-        public void sortTop3Scores() {
+        void sortTop3Scores() {
 
             ArrayList<Integer> finalList = new ArrayList<>();
 
@@ -216,7 +208,7 @@ public class Server {
             }
         }
 
-        public void handleComputerLevel(Pair data) {
+        void handleComputerLevel(Pair data) {
 
             // get the player id from the data key
             int PlayerID = (Integer) data.getKey();
@@ -228,7 +220,7 @@ public class Server {
             games.get(PlayerID).computerLevel =  subpair.getValue();
         }
 
-        public void handleGameBoardUpdate(Pair data) {
+        void handleGameBoardUpdate(Pair data) {
             // get the player id from the data key
             int PlayerID = (Integer) data.getKey();
 
@@ -271,7 +263,7 @@ public class Server {
             }
         }
 
-        public void handlePlayAgain(Pair data) {
+        void handlePlayAgain(Pair data) {
             // get the player id from the data key
             int PlayerID = (Integer) data.getKey();
 

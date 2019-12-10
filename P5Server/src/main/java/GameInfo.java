@@ -1,9 +1,9 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GameInfo implements Serializable {
-    public String type;
-    public String computerLevel;
+class GameInfo implements Serializable {
+    String type;
+    private String computerLevel;
 
     ArrayList<Server.ClientThread> clients;
     // TODO: Add more data members as needed
