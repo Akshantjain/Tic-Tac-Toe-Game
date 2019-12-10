@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class Client {
+class Client {
     private ClientThread connectionThread = new ClientThread();
     private Consumer<Serializable> scores;
     private Consumer<Serializable> progress;
@@ -18,17 +18,15 @@ public class Client {
     private Consumer<Serializable> gameResult;
     private String IP;
     private int port;
-    private int playerID;
 
 
     Client(String ip, int port,
-           Consumer<Serializable> progress,
-           Consumer<Serializable> scores,
-           Consumer<Serializable> player,
-           Consumer<Serializable> newBoard,
-           Consumer<Serializable> gameResult,
-           Consumer<Serializable> newBoardWithNoMoves
-            ) {
+           Consumer <Serializable> progress,
+           Consumer <Serializable> scores,
+           Consumer <Serializable> player,
+           Consumer <Serializable> newBoard,
+           Consumer <Serializable> gameResult
+    ) {
         this.progress = progress;
         this.scores = scores;
         this.IP = ip;
@@ -60,11 +58,11 @@ public class Client {
         connectionThread.socket.close();
     }
 
-    public void handleUpdatedBoard(Pair data) {
+    private void handleUpdatedBoard(Pair data) {
         newBoard.accept((int) data.getValue());
     }
 
-    public void handleGameResults (Pair data) {
+    private void handleGameResults(Pair data) {
 
         Pair<Integer, ArrayList<String>> subpair = (Pair<Integer, ArrayList<String>>) data.getValue();
 
@@ -73,7 +71,7 @@ public class Client {
         gameResult.accept(data.getKey().toString() + "\n Score: " + subpair.getKey().toString());
     }
 
-    public void handleTop3Scores(Pair data) {
+    private void handleTop3Scores(Pair data) {
         ArrayList<Integer> subpair = (ArrayList<Integer>) data.getValue();
         scores.accept(subpair);
     }

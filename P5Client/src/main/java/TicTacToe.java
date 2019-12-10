@@ -41,7 +41,6 @@ public class TicTacToe extends Application {
     private Vector<Rectangle> board = new Vector<>();
     private Text clientTitle3;
     private TextField result;
-    private String gameResult;
     private PauseTransition pauseSendMove = new PauseTransition(Duration.seconds(1));
     private boolean gotResult = false;
 
@@ -108,10 +107,7 @@ public class TicTacToe extends Application {
                         data -> Platform.runLater(() -> {
                             makeComputerMove((int) data - 1);
                         }),
-                        data -> Platform.runLater(() -> updateClientUI(data.toString())),
-                        data -> Platform.runLater(() -> {
-                            makeComputerMove((int) data - 1);
-                        })
+                        data -> Platform.runLater(() -> updateClientUI(data.toString()))
                 );
                 primaryStage.setScene(SceneMap.get("ClientScene2"));
 
